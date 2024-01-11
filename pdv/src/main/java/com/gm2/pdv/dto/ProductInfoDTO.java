@@ -13,5 +13,5 @@ public class ProductInfoDTO {
 
     private String description;
     private int quantity;
-    private List<ProductInfoDTO> products;
+
 }

@@ -1,6 +1,7 @@
 package com.gm2.pdv.service;
 
 import com.gm2.pdv.dto.ProductDTO;
+import com.gm2.pdv.dto.ProductInfoDTO;
 import com.gm2.pdv.dto.SaleDTO;
 import com.gm2.pdv.dto.SaleInfoDTO;
 import com.gm2.pdv.entity.ItemSale;
@@ -16,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,9 +32,30 @@ public class SaleService {
     private final SaleRepository saleRepository;
     private final ItemSaleRepository itemSaleRepository;
 
-//    public List<SaleInfoDTO> findAll(){
-//
-//    }
+    public List<SaleInfoDTO> findAll(){
+
+        return saleRepository.findAll().stream().map(sale -> getSaleInfo(sale)).collect(Collectors.toList());
+
+    }
+
+    private SaleInfoDTO getSaleInfo(Sale sale) {
+        SaleInfoDTO saleInfoDTO = new SaleInfoDTO();
+        saleInfoDTO.setUser(sale.getUser().getNome());
+        saleInfoDTO.setDate(sale.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        saleInfoDTO.setProducts(getProductInfo(sale.getItems()));
+
+        return saleInfoDTO;
+    }
+
+    private List<ProductInfoDTO> getProductInfo(List<ItemSale> items) {
+        return items.stream().map(item ->{
+            ProductInfoDTO productInfoDto =  new ProductInfoDTO();
+            productInfoDto.setDescription(item.getProduct().getDescription());
+            productInfoDto.setQuantity(item.getQuantity());
+
+            return productInfoDto;
+        }).collect(Collectors.toList());
+    }
 
 
     @Transactional
@@ -72,5 +96,10 @@ public class SaleService {
             return itemSale;
 
         }).collect(Collectors.toList());
+    }
+
+    public SaleInfoDTO getById(long id) {
+       Sale sale =  saleRepository.findById(id).get();
+       return getSaleInfo(sale);
     }
 }
