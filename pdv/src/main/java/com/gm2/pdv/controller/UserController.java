@@ -1,5 +1,6 @@
 package com.gm2.pdv.controller;
 
+import com.gm2.pdv.dto.ResponseDTO;
 import com.gm2.pdv.entity.User;
 import com.gm2.pdv.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +23,16 @@ public class UserController {
 
     @GetMapping()
     public ResponseEntity getAll(){
-        return new ResponseEntity<>(userRepository.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDTO<>("",userRepository.findAll()), HttpStatus.OK);
     }
 
     @PostMapping()
     public ResponseEntity post(@RequestBody User user){
         try{
             user.setEnable(true);
-            return new ResponseEntity<>(userRepository.save(user),HttpStatus.CREATED);
+            return new ResponseEntity<>(new ResponseDTO<>("Usuario cadastrado com sucesso!",userRepository.save(user)),HttpStatus.CREATED);
         }catch (Exception error){
-            return new ResponseEntity<>(error.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ResponseDTO<>(error.getMessage(),null),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -40,7 +41,7 @@ public class UserController {
         Optional<User> userToEdit = userRepository.findById(user.getId());
         if(userToEdit.isPresent()){
             userRepository.save(user);
-            return new ResponseEntity<>(user, HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseDTO<>("Usuario editado com sucesso!",user), HttpStatus.OK);
         }
 
         return ResponseEntity.notFound().build();
@@ -50,9 +51,9 @@ public class UserController {
     public ResponseEntity delete(@PathVariable long id){
         try{
             userRepository.deleteById(id);
-            return new ResponseEntity<>("Usuário removido com sucesso!",HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseDTO<>("Usuário removido com sucesso!", id),HttpStatus.OK);
         }catch (Exception error){
-            return new ResponseEntity<>(error.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ResponseDTO<>(error.getMessage(),null),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
