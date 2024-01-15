@@ -2,8 +2,10 @@ package com.gm2.pdv.controller;
 
 import com.gm2.pdv.dto.ResponseDTO;
 import com.gm2.pdv.entity.User;
-import com.gm2.pdv.repository.UserRepository;
+import com.gm2.pdv.exceptions.NoItemException;
+import com.gm2.pdv.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -15,45 +17,49 @@ import java.util.Optional;
 @RequestMapping("/user")
 public class UserController {
 
-    private UserRepository userRepository;
+    private UserService userService;
 
-    public UserController(@Autowired UserRepository userRepository){
-        this.userRepository = userRepository;
+    public UserController(@Autowired UserService userService){
+        this.userService = userService;
     }
 
     @GetMapping()
     public ResponseEntity getAll(){
-        return new ResponseEntity<>(new ResponseDTO<>("",userRepository.findAll()), HttpStatus.OK);
+        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
     }
 
     @PostMapping()
     public ResponseEntity post(@RequestBody User user){
         try{
             user.setEnable(true);
-            return new ResponseEntity<>(new ResponseDTO<>("Usuario cadastrado com sucesso!",userRepository.save(user)),HttpStatus.CREATED);
+            userService.save(user);
+            return new ResponseEntity<>(new ResponseDTO("Usuario cadastrado com sucesso!"),HttpStatus.CREATED);
         }catch (Exception error){
-            return new ResponseEntity<>(new ResponseDTO<>(error.getMessage(),null),HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ResponseDTO(error.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PutMapping()
     public ResponseEntity put(@RequestBody User user){
-        Optional<User> userToEdit = userRepository.findById(user.getId());
-        if(userToEdit.isPresent()){
-            userRepository.save(user);
-            return new ResponseEntity<>(new ResponseDTO<>("Usuario editado com sucesso!",user), HttpStatus.OK);
+        try{
+            userService.update(user);
+            return new ResponseEntity<>(new ResponseDTO("Usuario editado com sucesso!"), HttpStatus.OK);
+        } catch (NoItemException error){
+            return new ResponseEntity<>(new ResponseDTO(error.getMessage()),HttpStatus.BAD_REQUEST);
+        } catch (Exception error){
+            return new ResponseEntity<>(new ResponseDTO(error.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity delete(@PathVariable long id){
         try{
-            userRepository.deleteById(id);
-            return new ResponseEntity<>(new ResponseDTO<>("Usuário removido com sucesso!", id),HttpStatus.OK);
+            userService.deleteById(id);
+            return new ResponseEntity<>(new ResponseDTO("Usuário removido com sucesso!"),HttpStatus.OK);
+        }catch (EmptyResultDataAccessException error){
+            return new ResponseEntity<>(new ResponseDTO("Não foi possível localizar o usuário"),HttpStatus.BAD_REQUEST);
         }catch (Exception error){
-            return new ResponseEntity<>(new ResponseDTO<>(error.getMessage(),null),HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ResponseDTO(error.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -24,24 +24,26 @@ public class ProductController {
 
     @GetMapping()
     public ResponseEntity getAll(){
-        return new ResponseEntity<>(new ResponseDTO<>("",productRepository.findAll()), HttpStatus.OK);
+        return new ResponseEntity<>(productRepository.findAll(), HttpStatus.OK);
     }
 
     @PostMapping()
     public ResponseEntity post(@RequestBody Product product){
         try {
-            return new ResponseEntity<>(new ResponseDTO<>("Produto cadastrado com sucesso!",productRepository.save(product)), HttpStatus.CREATED);
+            productRepository.save(product);
+            return new ResponseEntity<>(new ResponseDTO("Produto cadastrado com sucesso!"), HttpStatus.CREATED);
         }catch (Exception error){
-            return new ResponseEntity<>(new ResponseDTO<>(error.getMessage(),null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ResponseDTO(error.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PutMapping()
     public ResponseEntity put(@RequestBody Product product){
         try{
-            return new ResponseEntity<>(new ResponseDTO<>("Produto editado com sucesso!",productRepository.save(product)), HttpStatus.OK);
+            productRepository.save(product);
+            return new ResponseEntity<>(new ResponseDTO("Produto editado com sucesso!"), HttpStatus.OK);
         }catch (Exception error){
-            return new ResponseEntity<>(new ResponseDTO<>(error.getMessage(),null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ResponseDTO(error.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -49,9 +51,9 @@ public class ProductController {
     public ResponseEntity delete(@PathVariable long id){
         try {
             productRepository.deleteById(id);
-            return new ResponseEntity<>(new ResponseDTO<>("Produto removido com sucesso!",id),HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseDTO("Produto removido com sucesso!"),HttpStatus.OK);
         }catch (Exception error){
-            return new ResponseEntity<>(new ResponseDTO<>(error.getMessage(),null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ResponseDTO(error.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

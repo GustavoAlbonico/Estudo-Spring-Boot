@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ProductInfoDTO {
 
+    private Long id;
     private String description;
     private int quantity;
 
