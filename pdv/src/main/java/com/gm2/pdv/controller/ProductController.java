@@ -1,13 +1,17 @@
 package com.gm2.pdv.controller;
 
+import com.gm2.pdv.dto.ProductDTO;
 import com.gm2.pdv.dto.ResponseDTO;
 import com.gm2.pdv.entity.Product;
 import com.gm2.pdv.repository.ProductRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 
 @Controller
@@ -15,9 +19,11 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
 
     private ProductRepository productRepository;
+    private ModelMapper mapper;
 
     public ProductController(@Autowired ProductRepository productRepository){
         this.productRepository = productRepository;
+        this.mapper =  new ModelMapper();
     }
 
     @GetMapping()
@@ -26,9 +32,9 @@ public class ProductController {
     }
 
     @PostMapping()
-    public ResponseEntity post(@RequestBody Product product){
+    public ResponseEntity post(@Valid @RequestBody ProductDTO product){
         try {
-            productRepository.save(product);
+            productRepository.save(mapper.map(product,Product.class));
             return new ResponseEntity<>(new ResponseDTO("Produto cadastrado com sucesso!"), HttpStatus.CREATED);
         }catch (Exception error){
             return new ResponseEntity<>(new ResponseDTO(error.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -36,9 +42,9 @@ public class ProductController {
     }
 
     @PutMapping()
-    public ResponseEntity put(@RequestBody Product product){
+    public ResponseEntity put(@Valid @RequestBody ProductDTO product){
         try{
-            productRepository.save(product);
+            productRepository.save(mapper.map(product,Product.class));
             return new ResponseEntity<>(new ResponseDTO("Produto editado com sucesso!"), HttpStatus.OK);
         }catch (Exception error){
             return new ResponseEntity<>(new ResponseDTO(error.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);

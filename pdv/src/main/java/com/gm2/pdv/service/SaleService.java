@@ -1,6 +1,6 @@
 package com.gm2.pdv.service;
 
-import com.gm2.pdv.dto.ProductDTO;
+import com.gm2.pdv.dto.ProductSaleDTO;
 import com.gm2.pdv.dto.ProductInfoDTO;
 import com.gm2.pdv.dto.SaleDTO;
 import com.gm2.pdv.dto.SaleInfoDTO;
@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -40,12 +42,24 @@ public class SaleService {
     }
 
     private SaleInfoDTO getSaleInfo(Sale sale) {
+        var products = getProductInfo(sale.getItems());
+        BigDecimal total = getTotal(products);
 
         return SaleInfoDTO.builder()
                 .user(sale.getUser().getNome())
                 .date(sale.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-                .products(getProductInfo(sale.getItems()))
+                .products(products)
+                .total(total)
                 .build();
+    }
+
+    private BigDecimal getTotal(List<ProductInfoDTO> products) {
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (ProductInfoDTO productInfoDTO : products) {
+            total = total.add(productInfoDTO.getPrice().multiply(new BigDecimal(productInfoDTO.getQuantity())));
+        }
+        return total;
     }
 
     private List<ProductInfoDTO> getProductInfo(List<ItemSale> items) {
@@ -59,6 +73,7 @@ public class SaleService {
                     .id(item.getId())
                     .description(item.getProduct().getDescription())
                     .quantity(item.getQuantity())
+                    .price(item.getProduct().getPrice())
                     .build()
         ).collect(Collectors.toList());
     }
@@ -91,7 +106,7 @@ public class SaleService {
         }
     }
 
-    private List<ItemSale> getItemSale(List<ProductDTO> products) {
+    private List<ItemSale> getItemSale(List<ProductSaleDTO> products) {
 
         if(products.isEmpty()){
             throw new InvalidOperationException("Não é possivel adicionar venda sem itens!");
