@@ -15,14 +15,12 @@ import com.gm2.pdv.repository.ProductRepository;
 import com.gm2.pdv.repository.SaleRepository;
 import com.gm2.pdv.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.management.modelmbean.InvalidTargetObjectTypeException;
-import java.text.DateFormat;
+import org.springframework.util.CollectionUtils;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,23 +40,27 @@ public class SaleService {
     }
 
     private SaleInfoDTO getSaleInfo(Sale sale) {
-        SaleInfoDTO saleInfoDTO = new SaleInfoDTO();
-        saleInfoDTO.setUser(sale.getUser().getNome());
-        saleInfoDTO.setDate(sale.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        saleInfoDTO.setProducts(getProductInfo(sale.getItems()));
 
-        return saleInfoDTO;
+        return SaleInfoDTO.builder()
+                .user(sale.getUser().getNome())
+                .date(sale.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                .products(getProductInfo(sale.getItems()))
+                .build();
     }
 
     private List<ProductInfoDTO> getProductInfo(List<ItemSale> items) {
-        return items.stream().map(item ->{
-            ProductInfoDTO productInfoDto =  new ProductInfoDTO();
-            productInfoDto.setId(item.getId());
-            productInfoDto.setDescription(item.getProduct().getDescription());
-            productInfoDto.setQuantity(item.getQuantity());
 
-            return productInfoDto;
-        }).collect(Collectors.toList());
+        if(CollectionUtils.isEmpty(items)){
+            return Collections.emptyList();
+        }
+
+        return items.stream().map(
+                item -> ProductInfoDTO.builder()
+                    .id(item.getId())
+                    .description(item.getProduct().getDescription())
+                    .quantity(item.getQuantity())
+                    .build()
+        ).collect(Collectors.toList());
     }
 
 
@@ -96,7 +98,8 @@ public class SaleService {
         }
 
         return products.stream().map(item -> {
-            Product product = productRepository.getReferenceById(item.getProductid());
+            Product product = productRepository.findById(item.getProductid())
+                    .orElseThrow(() -> new NoItemException("Item da venda não encontrado!"));
 
             ItemSale itemSale = new ItemSale();
             itemSale.setProduct(product);

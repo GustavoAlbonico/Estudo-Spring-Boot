@@ -1,6 +1,5 @@
 package com.gm2.pdv.dto;
 
-import com.gm2.pdv.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -2,7 +2,6 @@ package com.gm2.pdv.controller;
 
 import com.gm2.pdv.dto.ResponseDTO;
 import com.gm2.pdv.entity.User;
-import com.gm2.pdv.exceptions.NoItemException;
 import com.gm2.pdv.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -10,8 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/user")
@@ -44,8 +41,6 @@ public class UserController {
         try{
             userService.update(user);
             return new ResponseEntity<>(new ResponseDTO("Usuario editado com sucesso!"), HttpStatus.OK);
-        } catch (NoItemException error){
-            return new ResponseEntity<>(new ResponseDTO(error.getMessage()),HttpStatus.BAD_REQUEST);
         } catch (Exception error){
             return new ResponseEntity<>(new ResponseDTO(error.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
         }
