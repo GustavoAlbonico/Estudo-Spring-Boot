@@ -1,9 +1,9 @@
 package com.gm2.pdv.entity;
 
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+
 import java.util.List;
 
 
@@ -19,15 +19,12 @@ public class User {
     private Long id;
 
     @Column(length = 100, nullable = false)
-    @NotBlank(message = "Campo nome é obrigatório!")
     private String nome;
 
-    @Column(length = 30, nullable = false)
-    @NotBlank(message = "O campo username é obrigatório!")
+    @Column(length = 30, nullable = false,unique = true)
     private String username;
 
-    @Column(length = 40, nullable = false)
-    @NotBlank(message = "O campo senha é obrigatório!")
+    @Column(length = 60, nullable = false)
     private String password;
 
     private boolean isEnable;

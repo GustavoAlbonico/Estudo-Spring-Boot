@@ -1,6 +1,7 @@
 package com.gm2.pdv.service;
 
 import com.gm2.pdv.dto.UserDTO;
+import com.gm2.pdv.dto.UserResponseDTO;
 import com.gm2.pdv.entity.User;
 import com.gm2.pdv.exceptions.NoItemException;
 import com.gm2.pdv.repository.UserRepository;
@@ -20,10 +21,10 @@ public class UserService {
     private UserRepository userRepository;
     private ModelMapper mapper = new ModelMapper();
 
-    public List<UserDTO> findAll(){
+    public List<UserResponseDTO> findAll(){
         return userRepository.findAll().stream().map(user ->
-                new UserDTO(user.getId(), user.getNome(),user.getUsername(),
-                        user.getPassword(), user.isEnable())).collect(Collectors.toList());
+                new UserResponseDTO(user.getId(), user.getNome(),user.getUsername()
+                        ,user.isEnable())).collect(Collectors.toList());
     }
 
     public UserDTO save(UserDTO user){
@@ -36,7 +37,7 @@ public class UserService {
                 userToSave.getPassword(), userToSave.isEnable());
     }
 
-    public UserDTO findById(long id){
+    public UserResponseDTO findById(long id){
         Optional<User> optional =  userRepository.findById(id);
 
         if(!optional.isPresent()){
@@ -44,8 +45,7 @@ public class UserService {
         }
 
         User user =  optional.get();
-        return new UserDTO(user.getId(), user.getNome(),user.getUsername(),
-                user.getPassword(), user.isEnable());
+        return new UserResponseDTO(user.getId(), user.getNome(),user.getUsername(), user.isEnable());
     }
 
     public UserDTO update(UserDTO user){
@@ -66,4 +66,9 @@ public class UserService {
     public void deleteById(long id){
         userRepository.deleteById(id);
     }
+
+//    public User getByUserName(String username){
+//        return userRepository.findUserByUserName(username);
+//    }
+
 }

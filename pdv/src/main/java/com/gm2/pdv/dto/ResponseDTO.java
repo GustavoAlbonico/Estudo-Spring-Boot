@@ -10,7 +10,6 @@ public class ResponseDTO {
     @Getter
     private List<String> messages;
 
-
     public ResponseDTO(List<String> messages) {
         this.messages = messages;
     }
