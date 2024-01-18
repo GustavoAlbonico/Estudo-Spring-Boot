@@ -1,6 +1,6 @@
 package com.gm2.pdv.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 
 
