@@ -14,8 +14,9 @@ public class UserPrincipal implements UserDetails {
     private Collection<? extends GrantedAuthority> authorities;
 
     public UserPrincipal(User user){
-        this.username = user.getUsername();
+        this.username =  user.getUsername();
         this.password = user.getPassword();
+
     }
 
     @Override
