@@ -9,9 +9,14 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.servlet.Filter;
 
 
 @Configuration
@@ -27,6 +32,9 @@ public class SecurityConfig {
 
     @Autowired
     private CustomUserDetailService userDetailService;
+
+    @Autowired
+    private JwtService jwtService;
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http)
@@ -45,9 +53,17 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/info").permitAll()
                 .antMatchers(HttpMethod.POST, "/sign-up").permitAll()
+                .antMatchers("/login").permitAll()
                 .anyRequest().authenticated().and()
-                .httpBasic();
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    private OncePerRequestFilter jwtFilter() {
+        return new JwtAuthFilter(jwtService, userDetailService);
     }
 }
