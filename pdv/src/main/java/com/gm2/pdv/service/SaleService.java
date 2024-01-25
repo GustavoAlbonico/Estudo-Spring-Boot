@@ -46,7 +46,7 @@ public class SaleService {
         BigDecimal total = getTotal(products);
 
         return SaleInfoDTO.builder()
-                .user(sale.getUser().getNome())
+                .user(sale.getUser().getName())
                 .date(sale.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
                 .products(products)
                 .total(total)

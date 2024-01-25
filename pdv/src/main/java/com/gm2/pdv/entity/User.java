@@ -2,7 +2,6 @@ package com.gm2.pdv.entity;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 
@@ -21,7 +20,7 @@ public class User {
     private Long id;
 
     @Column(length = 100, nullable = false)
-    private String nome;
+    private String name;
 
     @Column(length = 30, nullable = false,unique = true)
     private String username;

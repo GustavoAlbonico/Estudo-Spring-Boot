@@ -12,6 +12,6 @@ public class PDVInfoController {
 
     @GetMapping()
     public ResponseEntity get(){
-        return new ResponseEntity<>("PDV info", HttpStatus.OK);
+        return new ResponseEntity<>("PDV Info", HttpStatus.OK);
     }
 }

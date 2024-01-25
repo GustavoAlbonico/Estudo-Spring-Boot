@@ -14,7 +14,7 @@ public class UserDTO {
     private Long id;
 
     @NotBlank(message = "Campo nome é obrigatório!")
-    private String nome;
+    private String name;
 
     @NotBlank(message = "O campo username é obrigatório!")
     private String username;

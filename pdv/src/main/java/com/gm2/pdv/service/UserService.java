@@ -23,7 +23,7 @@ public class UserService {
 
     public List<UserResponseDTO> findAll(){
         return userRepository.findAll().stream().map(user ->
-                new UserResponseDTO(user.getId(), user.getNome(),user.getUsername()
+                new UserResponseDTO(user.getId(), user.getName(),user.getUsername()
                         ,user.isEnable())).collect(Collectors.toList());
     }
 
@@ -33,7 +33,7 @@ public class UserService {
         User userToSave = mapper.map(user,User.class);
 
         userRepository.save(userToSave);
-        return new UserDTO(userToSave.getId(), userToSave.getNome(),userToSave.getUsername(),
+        return new UserDTO(userToSave.getId(), userToSave.getName(),userToSave.getUsername(),
                 userToSave.getPassword(), userToSave.isEnable());
     }
 
@@ -45,7 +45,7 @@ public class UserService {
         }
 
         User user =  optional.get();
-        return new UserResponseDTO(user.getId(), user.getNome(),user.getUsername(), user.isEnable());
+        return new UserResponseDTO(user.getId(), user.getName(),user.getUsername(), user.isEnable());
     }
 
     public UserDTO update(UserDTO user){
@@ -59,7 +59,7 @@ public class UserService {
         }
 
         userRepository.save(userToSave);
-        return new UserDTO(userToSave.getId(), userToSave.getNome(),user.getUsername(),
+        return new UserDTO(userToSave.getId(), userToSave.getName(),user.getUsername(),
                 user.getPassword(), userToSave.isEnable());
     }
 
