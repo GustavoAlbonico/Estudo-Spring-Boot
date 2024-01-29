@@ -1,11 +1,18 @@
 package com.gm2.cryptoApp.entity;
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
+
 @Entity
 @Table(name = "coin")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Coin {
 
     @Id
@@ -13,55 +20,16 @@ public class Coin {
     @Column(name = "ID")
     private int id;
 
-    @Column(name = "NAME")
+    @Column(name = "NAME", nullable = false)
     private String name;
 
-    @Column(name = "PRICE")
+    @Column(name = "PRICE", precision = 10, scale = 2, nullable = false)
     private BigDecimal price;
 
-    @Column(name = "QUANTITY")
+    @Column(name = "QUANTITY", precision = 20, scale = 5, nullable = false)
     private BigDecimal quantity;
 
     @Column(name = "DATETIME")
     private Timestamp dateTime;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public BigDecimal getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(BigDecimal quantity) {
-        this.quantity = quantity;
-    }
-
-    public Timestamp getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(Timestamp dateTime) {
-        this.dateTime = dateTime;
-    }
 }

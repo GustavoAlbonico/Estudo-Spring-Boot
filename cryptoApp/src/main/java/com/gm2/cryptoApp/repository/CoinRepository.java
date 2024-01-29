@@ -42,6 +42,7 @@ public class CoinRepository {
         String jpql = "select c from Coin c where c.name like :name";
         TypedQuery<Coin> query = entityManager.createQuery(jpql,Coin.class);
         query.setParameter("name","%" +  name + "%");
+
         return query.getResultList();
     }
 
